@@ -77,7 +77,7 @@ poetry run pytest
 Run application (example):
 
 ``` bash
-poetry run python src/main.py
+poetry run python src/muscle_ai/main.py
 ```
 
 ------------------------------------------------------------------------
