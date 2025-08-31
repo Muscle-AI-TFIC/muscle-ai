@@ -11,4 +11,4 @@ if __name__ == "__main__":
             answer = ask_gemini(question)
             print(f"\nAI: {answer}\n")
         except Exception as e:
-            print(f"\n⚠️ Error: {e}\n")
+            print(f"\n Error: {e}\n")
