@@ -1,6 +1,6 @@
 from muscle_ai.ai_client import ask_gemini
 
-if __name__ == "__main__":
+def main():
     print("Muscle AI: Questions about the gym? Ask me! (Type 'exit' to end the conversation)\n")
     while True:
         question = input("You: ")
@@ -12,3 +12,6 @@ if __name__ == "__main__":
             print(f"\nAI: {answer}\n")
         except Exception as e:
             print(f"\n Error: {e}\n")
+
+if __name__ == "__main__":
+    main()
