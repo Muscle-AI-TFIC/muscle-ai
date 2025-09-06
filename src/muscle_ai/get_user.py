@@ -17,16 +17,16 @@ try:
 
     user_data = []
 
-    for user in users.users:
-            user_data = {
+    with open(output_file, "w", encoding="utf-8") as file:
+        for user in users.users:
+            user_data.append({
                 'id': user.uid,
                 'email' : user.email, 
                 "name" : user.display_name,  
-                "active": user.disabled 
-            }
+                "active": user.disabled,
+                })
 
-    with open(output_file, "w", encoding="utf-8") as file:
-        json.dump(user_data, file, indent= 4)
+        json.dump(user_data, file, indent= 2, ensure_ascii=False)
 
         
 
