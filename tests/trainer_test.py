@@ -1,10 +1,10 @@
 import pytest
 import json
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, Mock
 from muscle_ai import trainer
 
 
-def test_generate_training_plan_with_mock():
+def test_generate_training_plan():
     #Simulating the user data
     fake_user_data = {
         'age': 25,
@@ -19,15 +19,15 @@ def test_generate_training_plan_with_mock():
     fake_response = "Fake traning"
 
     #Mocking the ask_gemini function to return the fake response
-    with patch("muscle_ai.trainer.ask_gemini", return_value=fake_response) as mock_ai:
+    with patch("muscle_ai.trainer.ask_gemini", return_value=fake_response):
 
         result = trainer.generate_training_plan(fake_user_data)
 
         assert result == fake_response
 
 
-def test_load_user_data_with_mock():
-    #Simulating the content of a Json file
+def test_load_user_data():
+    #Simulating JSON
     fake_json = json.dumps({
         'age': 30,
         'weight': 80,
@@ -37,10 +37,16 @@ def test_load_user_data_with_mock():
         'language': 'portuguese'
     })
 
-     #Mocking the Path.exists method to always return True or the test will fail
+    #Criating a mock to simulate the file
+    mock_file = Mock()
+    mock_file.__enter__ = Mock(return_value=mock_file)
+    mock_file.__exit__ = Mock(return_value=None)
+    mock_file.read = Mock(return_value=fake_json)
+
+    #Mocking the Path.exists method to always return True or the test will fail
     with patch("pathlib.Path.exists", return_value=True):
-        #Mocking the open function to simulate reading from a file
-        with patch("builtins.open", mock_open(read_data=fake_json)):
+        #Opening the mock file instead of a real file
+        with patch("builtins.open", return_value=mock_file):
             data = trainer.load_user_data("fake_path.json")
 
             assert data['age'] == 30
