@@ -17,6 +17,7 @@ def generate_training_plan(user_data: dict) -> str:
     #Sending the users information to the ai model to generate a training plan
     prompt = (
         f"Create the best gym training plan for the following profile:\n\n"
+        f"Name: {user_data.get('name')}\n"
         f"Age: {user_data.get('age')}\n"
         f"Weight: {user_data.get('weight')} kg\n"
         f"Height: {user_data.get('height')} m\n"
