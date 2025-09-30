@@ -7,6 +7,7 @@ from muscle_ai import trainer
 def test_generate_training_plan():
     #Simulating the user data
     fake_user_data = {
+        'name': 'Caio',
         'age': 25,
         'weight': 70,
         'height': 1.75,
@@ -29,6 +30,7 @@ def test_generate_training_plan():
 def test_load_user_data():
     #Simulating JSON
     fake_json = json.dumps({
+        'name': 'Caio',
         'age': 30,
         'weight': 80,
         'height': 1.80,
