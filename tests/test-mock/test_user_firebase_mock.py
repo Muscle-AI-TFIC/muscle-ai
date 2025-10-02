@@ -5,7 +5,7 @@ from muscle_ai.get_user import get_user_firebase
 def test_user_firebase_mock_empty():
 
     mock_user_firebase = MagicMock()
-    mock_user_firebase.return_value = []
+    mock_user_firebase.iterate_all.return_value = []
 
     with patch('firebase_admin.auth.list_users', return_value=mock_user_firebase):
 
