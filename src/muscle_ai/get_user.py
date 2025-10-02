@@ -25,7 +25,7 @@ def save_user_json(user_data, filepath):
     with open(filepath, "w", encoding="utf-8") as file:
 
         json.dump(user_data, file, indent=2, ensure_ascii=False)
-    print(f"As informações foram salvas com sucesso em {filepath}")
+    print(f"As informações foram salvas em {filepath}")
 
 def main():
     
@@ -41,9 +41,9 @@ def main():
         save_user_json(users, output_file)
 
     except FileNotFoundError:
-        print(f"Erro: o arquivo com as credenciais {cred_path} não foi encontrado.")
+        print(f"O arquivo não foi encontrado.")
     except Exception as e:
-        print(f"Ocorreu um erro inesperado: {e}")
+        print(f"Ocorreu um erro: {e}")
 
 if __name__ == "__main__":
     main()
