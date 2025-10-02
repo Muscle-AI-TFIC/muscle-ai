@@ -2,17 +2,17 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-#puxando .env
+#calling .env
 load_dotenv()
 
-#configurando a chave da api
+#configuring the api key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-#selecionando o modelo do gemini
+#selecting the type of model
 model = genai.GenerativeModel("gemini-2.5-pro")
 
 
-#enviando uma pergunta ao gemini e exibindo a resposta
+#sending a question to gemini and showing the response
 def ask_gemini(question: str) -> str:
     response = model.generate_content(question)
     return response.text
