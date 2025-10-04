@@ -3,9 +3,9 @@ name: Muscle-Ai API Pipeline
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev-base" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev-base" ]
 
 jobs:
   build:
@@ -23,17 +23,23 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
 
     - name: Poetry for python
       run: pip install poetry
-      
-    - name: Pylint for poetry
-      run: poetry run pip install pylint
 
     - name: Dependencies
       run: poetry install
 
-    - name: Run Pylint
-      run: |
-        poetry run pylint $(git ls-files 'src/**/*.py' 'tests/**/*.py')
+    - name: Running Tests
+      run: poetry run pytest -v
+    
+    - name: Building package
+      run: poetry build
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: muscle-ai-package
+        path: dist/*.whl
+
+  
