@@ -1,0 +1,39 @@
+name: Muscle-Ai API Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'poetry'
+
+    - name: Poetry for python
+      run: pip install poetry
+      
+    - name: Pylint for poetry
+      run: poetry run pip install pylint
+
+    - name: Dependencies
+      run: poetry install
+
+    - name: Run Pylint
+      run: |
+        poetry run pylint $(git ls-files 'src/**/*.py' 'tests/**/*.py')
