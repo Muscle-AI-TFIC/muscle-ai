@@ -1,0 +1,7 @@
+.env
+key.json
+user.json
+test.json
+.vscode
+.pytest_cache
+__pycache__
