@@ -27,30 +27,19 @@ jobs:
     - name: Poetry for python
       run: pip install poetry
 
-    - name: Configure Poetry cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cache/pypoetry
-          ~/.venv
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
-      
-    - name: Pylint for poetry
-      run: poetry run pip install pylint
-
     - name: Dependencies
       run: poetry install
 
-    - name: Setup mock files
-      run: |
-        echo "GEMINI_API_KEY=test" > .env
-        mkdir -p src/muscle_ai
-        echo '{"test": true}' > src/muscle_ai/key.json
-        echo '{"name": "Test"}' > user_data.json
+    - name: Running Tests
+      run: poetry run pytest -v
+    
+    - name: Building package
+      run: poetry build
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: muscle-ai-package
+        path: dist/*.whl
 
-
-    - name: Run Pylint
-      run: |
-        poetry run pylint $(git ls-files 'src/**/*.py' 'tests/**/*.py') || true
+  
