@@ -60,9 +60,7 @@ jobs:
         cache: poetry
     
     - name: Build with poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: 1.x.x
+      run: pip install poetry
 
     - name: Dependencies
       run: poetry install
