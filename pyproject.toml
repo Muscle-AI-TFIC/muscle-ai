@@ -25,6 +25,8 @@ packages = [{include = "muscle_ai", from = "src"}]
 pytest = "^8.4.2"
 mockito = "^1.5.4"
 pytest-mock = "^3.14.1"
+pytest-html = "^4.1.1"
+pytest-cov = "^7.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
