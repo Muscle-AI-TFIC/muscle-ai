@@ -29,9 +29,6 @@ jobs:
 
     - name: Dependencies
       run: poetry install
-
-    - name: Running Tests
-      run: poetry run pytest -v
     
     - name: Building package
       run: poetry build
@@ -42,4 +39,39 @@ jobs:
         name: muscle-ai-package
         path: dist/*.whl
 
-  
+  test: 
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix: 
+        python-version: ["3.13"]
+    
+    steps: 
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: poetry
+    
+    - name: Build with poetry
+      run: pip install poetry
+    
+    - name: Dependencies
+      run: poetry install
+
+    - name: Running Tests
+      run: poetry run pytest -v
+    
+    - name: Building package
+      run: poetry build
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: test report
+        path: muscle-ai/report
