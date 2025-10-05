@@ -5,3 +5,4 @@ test.json
 .vscode
 .pytest_cache
 __pycache__
+report.html
