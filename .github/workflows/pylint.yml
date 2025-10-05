@@ -31,6 +31,9 @@ jobs:
     - name: Dependencies
       run: poetry install
     
+    - name: Running Tests
+      run: poetry run pytest -v
+    
     - name: Building package
       run: poetry build
     
