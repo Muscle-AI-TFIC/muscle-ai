@@ -2,6 +2,8 @@
 key.json
 user.json
 test.json
+training.json
+src/muscle_ai/__pycache__
 .vscode
 .pytest_cache
 __pycache__
