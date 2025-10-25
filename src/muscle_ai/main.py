@@ -1,28 +1,27 @@
 from muscle_ai.trainer import load_user_data, generate_training_plan
-import json
+from muscle_ai.get_user import get_user_firebase, save_json, get_traning_firebase
 
-def save_training_plan(training_plan: str, user_data: dict) -> str:
-    
-    filename = f"{user_data.get('name', 'user').lower()}_training_plan.json"
-    plan_data = {
-        "user_name": user_data.get('name', 'User'),
-        "training_plan": training_plan
-    }
-    
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(plan_data, f, indent=2, ensure_ascii=False)
-    
-    return filename
-
+import time
+import os
 
 def main():
-    print("Muscle AI: Thinking about the best type of traning just for you!\n")
-    
-    user_data = load_user_data("user_data.json")
-    training_plan = generate_training_plan(user_data)
-    saved_file = save_training_plan(training_plan, user_data)
 
-    print(f"Training plan generated and saved to {saved_file}.")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    output_fileUser = os.path.join(project_root, "user.json")
+    output_fileTraning = os.path.join(project_root, "training.json")
+
+    try:
+        while True:
+            user_data = get_user_firebase()
+            save_json(user_data, output_fileUser)
+
+            training_data = get_traning_firebase()
+            save_json(training_data, output_fileTraning)
+            
+            time.sleep(60)
+    except KeyboardInterrupt:
+        print("Ending the program.")
 
 
 if __name__ == "__main__":

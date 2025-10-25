@@ -1,15 +1,27 @@
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, firestore
 import json
+import os
+
+def initialize_firebase():
+    if not firebase_admin._apps:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        cred_path = os.path.join(project_root, "key.json")
+        
+        if not os.path.exists(cred_path):
+            raise FileNotFoundError(f"key.json not found at {cred_path}")
+        
+        cred = credentials.Certificate(cred_path)
+        firebase_admin.initialize_app(cred)
+        print("Firebase initialized successfully.")
+
 
 def get_user_firebase():
 
-    if not firebase_admin._apps:
-        cred_path = "C:/Users/murad/OneDrive/Documentos/muscle-ai/src/muscle_ai/key.json"
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
+    initialize_firebase()
  
-    user_data= []
+    user_data = []
 
     for user in auth.list_users().iterate_all():
         user_data.append({
@@ -20,30 +32,26 @@ def get_user_firebase():
         })
     return user_data
 
-def save_user_json(user_data, filepath):
+def get_traning_firebase():
 
+    initialize_firebase()
+
+    db = firestore.client()
+    docs = db.collection("trainings").stream()
+ 
+    traning_data = []
+
+    for doc in docs:
+        data = doc.to_dict()
+        traning_data.append({
+            'id': doc.id,
+            'Age': data.get('idade'),
+            'Goal': data.get('objetivo'),
+            'Weight': data.get('peso'),
+        })
+    return traning_data
+
+def save_json(data, filepath):
     with open(filepath, "w", encoding="utf-8") as file:
-
-        json.dump(user_data, file, indent=2, ensure_ascii=False)
-    print(f"As informações foram salvas em {filepath}")
-
-def main():
-    
-    cred_path = "C:/Users/murad/OneDrive/Documentos/muscle-ai/src/muscle_ai/key.json"
-    output_file = "user.json"
-
-    try:
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
-        print("Verificando conexao")
-
-        users = get_user_firebase()
-        save_user_json(users, output_file)
-
-    except FileNotFoundError:
-        print(f"O arquivo não foi encontrado.")
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
-
-if __name__ == "__main__":
-    main()
+        json.dump(data, file, indent=2, ensure_ascii=False)
+    print(f"json file saved on {filepath}")
