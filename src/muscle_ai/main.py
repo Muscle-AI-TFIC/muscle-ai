@@ -1,5 +1,5 @@
-from muscle_ai.trainer import load_user_data, generate_training_plan
-from muscle_ai.get_user import get_user_firebase, save_json, get_traning_firebase
+from muscle_ai.trainer import process_training_plans
+from muscle_ai.get_user import get_user, save_json
 
 import time
 import os
@@ -9,15 +9,13 @@ def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(os.path.dirname(current_dir))
     output_fileUser = os.path.join(project_root, "user.json")
-    output_fileTraning = os.path.join(project_root, "training.json")
+    output_fileTraningAi = os.path.join(project_root, "traningAi.json")
 
     try:
         while True:
-            user_data = get_user_firebase()
+            user_data = get_user()
             save_json(user_data, output_fileUser)
-
-            training_data = get_traning_firebase()
-            save_json(training_data, output_fileTraning)
+            process_training_plans(user_data, output_fileTraningAi)
             
             time.sleep(60)
     except KeyboardInterrupt:
