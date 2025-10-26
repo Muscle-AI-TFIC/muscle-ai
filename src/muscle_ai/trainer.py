@@ -1,7 +1,7 @@
 import json
 from muscle_ai.ai_client import ask_gemini
 
-def generate_training_plan(traning_data: dict) -> str:
+def generate_training_plan(traning_data: dict):
     prompt = (
         f"Create the best gym training plan for the following profile:\n\n"
         f"Age: {traning_data.get('age')}\n"
