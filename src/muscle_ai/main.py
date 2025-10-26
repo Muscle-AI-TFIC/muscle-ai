@@ -1,5 +1,6 @@
 from muscle_ai.trainer import process_training_plans
 from muscle_ai.get_user import get_user, save_json
+from muscle_ai.Send_data import sending_information
 
 import time
 import os
@@ -16,8 +17,9 @@ def main():
             user_data = get_user()
             save_json(user_data, output_fileUser)
             process_training_plans(user_data, output_fileTraningAi)
+            sending_information(output_fileTraningAi)
             
-            time.sleep(60)
+            time.sleep(240)
     except KeyboardInterrupt:
         print("Ending the program.")
 
