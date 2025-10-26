@@ -1,49 +1,44 @@
-import firebase_admin
-from firebase_admin import credentials, auth
+from supabase import create_client, Client
 import json
+import os
 
-def get_user_firebase():
+def initialize_supabase():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    cred_path = os.path.join(project_root, "key.json")
+        
+    if not os.path.exists(cred_path):
+        raise FileNotFoundError(f"key.json not found at {cred_path}")
+        
+    with open(cred_path, "r", encoding="utf-8") as f:
+        keys = json.load(f)
 
-    if not firebase_admin._apps:
-        cred_path = "C:/Users/murad/OneDrive/Documentos/muscle-ai/src/muscle_ai/key.json"
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
+    supabase: Client = create_client(keys["SUPABASE_URL"], keys["SUPABASE_KEY"])
+    print("Supabase initialized successfully.")
+    return supabase
+
+
+
+def get_user():
+
+    supabase = initialize_supabase()
+
+    response = supabase.table("person_info").select("*").execute()
+    profiles = response.data if hasattr(response, "data") else response
  
-    user_data= []
+    user_data = []
 
-    for user in auth.list_users().iterate_all():
+    for user in profiles:
         user_data.append({
-            'id': user.uid,
-            'email': user.email,
-            "name": user.display_name,
-            "active": user.disabled,
+             "id": user.get("user_id"),
+            "age": user.get("age"),
+            "height": user.get("height"),
+            "weight": user.get("weight"),
+            "goal": user.get("goal")
         })
     return user_data
 
-def save_user_json(user_data, filepath):
-
+def save_json(data, filepath):
     with open(filepath, "w", encoding="utf-8") as file:
-
-        json.dump(user_data, file, indent=2, ensure_ascii=False)
-    print(f"As informações foram salvas em {filepath}")
-
-def main():
-    
-    cred_path = "C:/Users/murad/OneDrive/Documentos/muscle-ai/src/muscle_ai/key.json"
-    output_file = "user.json"
-
-    try:
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
-        print("Verificando conexao")
-
-        users = get_user_firebase()
-        save_user_json(users, output_file)
-
-    except FileNotFoundError:
-        print(f"O arquivo não foi encontrado.")
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
-
-if __name__ == "__main__":
-    main()
+        json.dump(data, file, indent=2, ensure_ascii=False)
+    print(f"json file saved on {filepath}")

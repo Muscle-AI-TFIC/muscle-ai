@@ -1,28 +1,36 @@
 import json
-from pathlib import Path
 from muscle_ai.ai_client import ask_gemini
 
-
-def load_user_data(file_path: str) -> dict:
-    #Getting the users information from the json file
-    path = Path(file_path)
-    if not path.exists():
-        raise FileNotFoundError(f"File {file_path} not found.")
-    
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def generate_training_plan(user_data: dict) -> str:
-    #Sending the users information to the ai model to generate a training plan
+def generate_training_plan(traning_data: dict) -> str:
     prompt = (
         f"Create the best gym training plan for the following profile:\n\n"
-        f"Name: {user_data.get('name')}\n"
-        f"Age: {user_data.get('age')}\n"
-        f"Weight: {user_data.get('weight')} kg\n"
-        f"Height: {user_data.get('height')} m\n"
-        f"Goal: {user_data.get('objective')}\n"
-        f"Experience level: {user_data.get('level')}\n"
-        f"Preferred language: {user_data.get('language')}\n"
+        f"Age: {traning_data.get('age')}\n"
+        f"Goal: {traning_data.get('goal')}\n"
+        f"Weight: {traning_data.get('weight')} kg\n"
+        f"Height: {traning_data.get('height')} cm\n\n"
     )
     return ask_gemini(prompt)
+
+def process_training_plans(training_file: list, output_file_path: str):
+
+    print("Generating training plans using AI...")
+    results = []
+        
+    for user in training_file:
+        user_id = user.get('id')
+
+        print(f"Processing training plan for user ID: {user_id}")
+
+        ai_response = generate_training_plan(user)
+        
+        results.append({
+            "user_id": user_id,
+            "training_plan": ai_response
+        })
+                
+    with open(output_file_path, 'w', encoding='utf-8') as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+        
+    print(f"Json file saved on: {output_file_path}")
+    return results
+    
