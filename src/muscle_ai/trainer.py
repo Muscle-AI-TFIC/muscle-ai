@@ -3,20 +3,25 @@ from muscle_ai.ai_client import ask_gemini
 
 def generate_training_plan(traning_data: dict):
     prompt = (
-        f"Generate a concise gym training summary in English for the following user profile:\n\n"
+        f"Generate a weekly gym training plan in English for the following user profile:\n\n"
         f"Age: {traning_data.get('age')}\n"
         f"Goal: {traning_data.get('goal')}\n"
         f"Weight: {traning_data.get('weight')} kg\n"
         f"Height: {traning_data.get('height')} cm\n\n"
-        f"Respond ONLY in JSON format with these exact keys:\n"
-        f"training_type (string), sets (string), days (string), equipment (string), focus (string).\n"
+        f"Respond ONLY in JSON format with this structure:\n"
+        f"data: {{\n"
+        f"  'Monday': {{ 'exercises': {{'ExerciseName': repetitions, ... }} }},\n"
+        f"  'Tuesday': {{ 'exercises': {{'ExerciseName': repetitions, ... }} }},\n"
+        f"  ...\n"
+        f"}}\n"
+        f"If a day has no exercises, set its value to the string 'rest' instead of an empty object.\n"
         f"Example:\n"
         f"{{\n"
-        f"  \"training_type\": \"Strength and endurance\",\n"
-        f"  \"sets\": \"8 sets\",\n"
-        f"  \"days\": \"5 days per week\",\n"
-        f"  \"equipment\": \"dumbbells, barbell, bench\",\n"
-        f"  \"focus\": \"chest, shoulders, triceps\"\n"
+        f"  \"data\": {{\n"
+        f"    \"Monday\": {{\"exercises\": {{\"Bench Press\": 12, \"Bicep Curl\": 12}}}},\n"
+        f"    \"Tuesday\": \"rest\",\n"
+        f"    \"Wednesday\": {{\"exercises\": {{\"Deadlift\": 10}}}}\n"
+        f"  }}\n"
         f"}}"
     )
     return ask_gemini(prompt)
@@ -50,11 +55,7 @@ def process_training_plans(training_file: list, output_file_path: str):
 
         results.append({
             "user_id": user_id,
-            "training_type": plan_data.get("training_type", ""),
-            "sets": plan_data.get("sets", ""),
-            "days": plan_data.get("days", ""),
-            "equipment": plan_data.get("equipment", ""),
-            "focus": plan_data.get("focus", "")
+            "training_plan": plan_data.get("data", {})
         })
                 
     with open(output_file_path, 'w', encoding='utf-8') as f:
