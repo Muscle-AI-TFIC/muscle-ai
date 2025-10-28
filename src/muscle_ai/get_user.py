@@ -30,7 +30,7 @@ def get_user():
 
     for user in profiles:
         user_data.append({
-             "id": user.get("user_id"),
+            "id": user.get("user_id"),
             "age": user.get("age"),
             "height": user.get("height"),
             "weight": user.get("weight"),
