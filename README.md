@@ -104,3 +104,29 @@ poetry run python src/muscle_ai/main.py
 
 This project is licensed under the **MIT License**. See the
 [LICENSE](LICENSE) file for more information.
+
+---------------------------------------------------------------------------------
+
+## Jenkins Setup
+
+To set up and run the Jenkins master and agent using Docker Compose, and ensure the agent has proper Docker permissions, follow these steps:
+
+1.  **Start Jenkins Master and Agent (Initial Setup):**
+    ```bash
+    docker compose up -d
+    ```
+
+    a.  **Build the `jenkins-agent` image, passing the host's GID:**
+        ```bash
+        docker compose build agent
+        ```
+
+    b.  **Restart the `jenkins-agent` container:**
+        ```bash
+        docker compose up -d agent
+        ```
+
+    These steps ensure that the `jenkins-agent` container is built with the correct Docker group permissions, allowing it to interact with the host's Docker daemon.
+    
+
+
