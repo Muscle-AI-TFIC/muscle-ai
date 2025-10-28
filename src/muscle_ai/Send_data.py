@@ -19,15 +19,19 @@ def sending_information(input_file: str):
 
     for entry in training_data:
         user_id = entry.get("user_id")
-        training_plan = entry.get("training_plan")
-
-        if not user_id or not training_plan:
-            print(f"Datas missing on: {entry}")
-            continue
+        training_type = entry.get("training_type")
+        sets = entry.get("sets")
+        days = entry.get("days")
+        equipment = entry.get("equipment")
+        focus = entry.get("focus")
 
         data_to_insert = {
             "user_id": user_id,
-            "training_plan": training_plan
+            "training_type": training_type,
+            "sets": sets,
+            "days": days,
+            "equipment": equipment,
+            "focus": focus
         }
 
         try:
