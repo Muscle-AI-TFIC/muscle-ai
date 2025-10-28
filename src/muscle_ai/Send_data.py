@@ -19,19 +19,17 @@ def sending_information(input_file: str):
 
     for entry in training_data:
         user_id = entry.get("user_id")
-        training_type = entry.get("training_type")
-        sets = entry.get("sets")
-        days = entry.get("days")
-        equipment = entry.get("equipment")
-        focus = entry.get("focus")
+        training_plan = entry.get("training_plan", {})
 
         data_to_insert = {
             "user_id": user_id,
-            "training_type": training_type,
-            "sets": sets,
-            "days": days,
-            "equipment": equipment,
-            "focus": focus
+            "monday": training_plan.get("Monday", {}),
+            "tuesday": training_plan.get("Tuesday", {}),
+            "wednesday": training_plan.get("Wednesday", {}),
+            "thursday": training_plan.get("Thursday", {}),
+            "friday": training_plan.get("Friday", {}),
+            "saturday": training_plan.get("Saturday", {}),
+            "sunday": training_plan.get("Sunday", {}),
         }
 
         try:
