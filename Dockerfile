@@ -13,8 +13,10 @@ RUN apt-get update && apt-get install -y \
     && groupadd -g ${DOCKER_GID} docker \
     && usermod -aG docker jenkins
 
+USER jenkins
+ENV POETRY_HOME="/home/jenkins/.poetry"
+ENV PATH="${POETRY_HOME}/bin:${PATH}"
+
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-ENV PATH="/home/jenkins/.local/bin:${PATH}"
-
-USER jenkins
+WORKDIR /home/jenkins/agent
