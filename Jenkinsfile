@@ -22,7 +22,7 @@ pipeline {
                 echo "Install Python and Poetry"
                 
                 sh '''
-                    sudo apt install python3
+                    apt-get update && apt-get install -y python3 python3-pip
                 '''
 
                 sh '''
@@ -39,6 +39,15 @@ pipeline {
                 poetry install --no-interaction --no-root
                 '''
             }
+            post {
+                success{
+                    echo "dependencies passed"
+                }
+                failure{
+                    echo "dependencies failed"
+                    sh 'tail -n 10 install_log.txt'
+                }
+            }
         }
 
         stage('Run Tests') {
@@ -54,6 +63,7 @@ pipeline {
                 }
                 failure {
                     echo "Tests failed."
+                    sh 'tail -n 10 test_log.txt'
                 }
             }
         }
@@ -71,6 +81,8 @@ pipeline {
                 }
                 failure{
                     echo "Build not completed"
+
+                    sh 'tail -n 10 build_log.txt'
                 }
             }
         }
