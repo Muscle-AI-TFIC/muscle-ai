@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   jenkins:
@@ -15,8 +14,27 @@ services:
     networks:
       - jenkins-net
 
+  jenkins-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jenkins-agent
+    restart: unless-stopped
+    networks:
+      - jenkins-net
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=Muscle-Agent
+      - JENKINS_SECRET= a9255a6b45cd9ef8c6a25afb4e0bf402d503b600522c75d6d2161981e8df3da7
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+    depends_on:
+      - jenkins
+
 volumes:
   jenkins_data:
 
 networks:
   jenkins-net:
+    driver: bridge
