@@ -9,3 +9,6 @@ src/muscle_ai/__pycache__
 .pytest_cache
 __pycache__
 report.html
+test.txt
+daily_workout.json
+daily_workout_exercises.json
