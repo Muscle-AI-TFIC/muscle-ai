@@ -17,16 +17,13 @@ pipeline {
 
     stages {
 
-        stage('Install Python & Poetry') {
+        stage('Check Environment') {
             steps {
-                echo "Install Python and Poetry"
-                
-                sh '''
-                    apt-get update && apt-get install -y python3 python3-pip
-                '''
+                echo "check Python and Poetry is install"
 
                 sh '''
-                    curl -sSL https://install.python-poetry.org
+                    python3 --version
+                    poetry --version
                 '''
 
             }
