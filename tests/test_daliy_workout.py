@@ -66,3 +66,5 @@ def test_get_daily_workout_exercises_success(mock_initialize_supabase):
     assert result == expected
 
 
+
+
