@@ -1,11 +1,18 @@
 import json
 from muscle_ai.ai_client import ask_gemini
 from muscle_ai.get_user import save_json
+from datetime import datetime
 import time
 
+def get_current_day():
+    return datetime.now().strftime("%A")
+
 def generate_training_plan(traning_data: dict):
+
+    current_day = get_current_day()
+
     prompt = (
-        f"Generate a Monday gym training plan in English for the following user profile:\n\n"
+        f"Generate a {current_day} training plan in English for the following user profile:\n\n"
         f"Age: {traning_data.get('age')}\n"
         f"Goal: {traning_data.get('goal')}\n"
         f"Weight: {traning_data.get('weight')} kg\n"
@@ -53,6 +60,7 @@ def process_training_plans(training_file: list, output_file_path: str):
 
     print("Generating training plans using AI...")
     results = []
+    current_day = get_current_day()
         
     for user in training_file:
         user_id = user.get('id')
@@ -65,14 +73,8 @@ def process_training_plans(training_file: list, output_file_path: str):
         plan_data = json.loads(ai_response_clean)
 
         training_plan = {
-                "Monday": plan_data.get("data", {}).get("Monday", []),
-                "Tuesday": "rest",
-                "Wednesday": "rest", 
-                "Thursday": "rest",
-                "Friday": "rest",
-                "Saturday": "rest",
-                "Sunday": "rest"
-            }
+            current_day: plan_data.get("data", {}).get(current_day, [])
+        }
 
         results.append({
             "user_id": user_id,
