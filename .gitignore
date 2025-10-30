@@ -10,3 +10,5 @@ src/muscle_ai/__pycache__
 __pycache__
 report.html
 test.txt
+daily_workout.json
+daily_workout_exercises.json
