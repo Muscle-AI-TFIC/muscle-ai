@@ -21,19 +21,35 @@ def sending_information(input_file: str):
         user_id = entry.get("user_id")
         training_plan = entry.get("training_plan", {})
 
-        data_to_insert = {
-            "user_id": user_id,
-            "monday": training_plan.get("Monday", {}),
-            "tuesday": training_plan.get("Tuesday", {}),
-            "wednesday": training_plan.get("Wednesday", {}),
-            "thursday": training_plan.get("Thursday", {}),
-            "friday": training_plan.get("Friday", {}),
-            "saturday": training_plan.get("Saturday", {}),
-            "sunday": training_plan.get("Sunday", {}),
-        }
+        for day_name, exercises in training_plan.items():
+            if exercises == "rest" or not exercises:
+                continue
 
-        try:
-            response = supabase.table("training_ai").insert(data_to_insert).execute()
-            print(f"Datas sent (user_id: {user_id})")
-        except Exception as e:
-            print(f"Failed to sent data (user_id: {user_id}): {e}")
+            daily_workout_data = {
+                "user_id": user_id,
+                "workout_date": day_name
+            }
+            try:
+                response = supabase.table("daily_workouts").insert(daily_workout_data).execute()
+                daily_workout_id = response.data[0]["id"]
+                print(f"  Created daily_workout for {day_name} (ID: {daily_workout_id})")
+
+
+                exercise_rows = []
+                for ex in exercises:
+                    exercise_rows.append({
+                        "daily_workout_id": daily_workout_id,
+                        "exercise_id": ex.get("exercise_id"),
+                        "position": ex.get("position"),
+                        "sets": ex.get("sets"),
+                        "reps": ex.get("reps")
+                    })
+
+                if exercise_rows:
+                    supabase.table("daily_workout_exercises").insert(exercise_rows).execute()
+                    print(f"  Added {len(exercise_rows)} exercises for {day_name}")
+
+            except Exception as e:
+                print(f"Failed to sent data (user_id: {user_id}): {e}")
+
+    print("Done mate!")
