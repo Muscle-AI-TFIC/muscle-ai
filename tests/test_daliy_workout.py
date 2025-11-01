@@ -12,7 +12,7 @@ def test_get_daily_workout_success(mock_initialize_supabase):
     mock_data = [
         {
             "id": "12",
-            "user_id": "Fuad123",
+            "user_id": "user1234",
             "workout_date": "2024-01-15",
         }
     ]
@@ -27,7 +27,7 @@ def test_get_daily_workout_success(mock_initialize_supabase):
     expected = [
         {
             "id": "12",
-            "user_id": "Fuad123",
+            "user_id": "user1234",
             "workout_date": "2024-01-15",
         }
     ]
