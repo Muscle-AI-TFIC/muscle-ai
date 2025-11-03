@@ -87,6 +87,8 @@ pipeline {
                     sh 'tail -n 10 build_log.txt'
                 }
             }
+        }
+
         stage('artefacts') {
             steps {
                 echo 'Generating artefacts'
@@ -98,8 +100,6 @@ pipeline {
                     find artifacts/ -type f 2>/dev/null
                 '''
             }
-        }
-
         }
     }   
 }
