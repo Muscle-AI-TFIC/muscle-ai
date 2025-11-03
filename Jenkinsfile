@@ -4,6 +4,9 @@ pipeline {
             label 'Muscle-Agent'
         }
     }
+    triggers {
+        githubPush()
+    }
 
     options {
         timeout(time: 1, unit: 'HOURS')
@@ -88,7 +91,7 @@ pipeline {
                     find artifacts/ -type f
                 '''
             }
-            post {
+            post {  
                 always {
                     archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                 }
