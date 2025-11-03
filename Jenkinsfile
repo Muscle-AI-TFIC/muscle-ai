@@ -51,6 +51,7 @@ pipeline {
             steps {
                 echo "Running tests"
                 sh '''
+                export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
                 poetry run pytest 
                 '''
             }
