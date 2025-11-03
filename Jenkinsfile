@@ -19,11 +19,13 @@ pipeline {
 
         stage('Check Environment') {
             steps {
-                echo "Checking Python and Poetry installation"
+                echo "check Python and Poetry is install"
+
                 sh '''
                     python3 --version
                     poetry --version
                 '''
+
             }
         }
 
@@ -31,47 +33,73 @@ pipeline {
             steps {
                 echo "Installing dependencies"
                 sh '''
-                    poetry install --no-interaction --no-root
+                poetry install --no-interaction --no-root
                 '''
             }
             post {
-                success {
-                    echo "Dependencies installed successfully"
+                success{
+                    echo "dependencies passed"
                 }
-                failure {
-                    echo "Dependency installation failed"
-                    sh 'tail -n 10 install_log.txt || true'
+                failure{
+                    echo "dependencies failed"
+                    sh 'tail -n 10 install_log.txt'
                 }
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo "Running tests and generating HTML report"
+                echo "Running tests"
                 sh '''
-                    mkdir -p reports
-                    poetry run pytest --maxfail=1 --disable-warnings \
-                        --html=reports/test_report.html --self-contained-html
+                export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
+                mkdir -p test-reports
+                 poetry run pytest --html=test-reports/report.html --self-contained-html 
                 '''
+            }
+            post {
+                always{
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'test-reports',
+                        reportFiles: 'report.html',
+                        reportName: 'Python Test Report'
+                    ])
+                }
             }
         }
 
-        stage('Build Project') {
+        stage('Build') {
             steps {
-                echo "Building project with Poetry"
+                echo "Building project"
                 sh '''
-                    mkdir -p build_output
-                    poetry build -f wheel -f sdist
-                    cp dist/* build_output/
+                poetry build
+                '''
+            }
+            post {
+                success {
+                    echo "Build completed"
+                }
+                failure{
+                    echo "Build not completed"
+
+                    sh 'tail -n 10 build_log.txt'
+                }
+            }
+        stage('artefacts') {
+            steps {
+                echo 'Generating artefacts'
+
+                sh '''
+                    mkdir -p artifacts/ 
+                    cp -r dist/ artifacts/ 2>/dev/null
+                    cp -r test-reports/ artifacts/ 2>/dev/null
+                    find artifacts/ -type f 2>/dev/null
                 '''
             }
         }
-    }
 
-    post {
-        always {
-            echo "Archiving artifacts..."
-            archiveArtifacts artifacts: 'build_output/*, reports/test_report.html', fingerprint: true
         }
-    }
+    }   
 }
