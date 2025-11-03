@@ -52,21 +52,9 @@ pipeline {
                 echo "Running tests"
                 sh '''
                 export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
-                mkdir -p test-reports
-                 poetry run pytest --html=test-reports/report.html --self-contained-html 
+                mkdir -p allure-results
+                poetry run pytest --alluredir=allure-results -v
                 '''
-            }
-            post {
-                always{
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'test-reports',
-                        reportFiles: 'report.html',
-                        reportName: 'Python Test Report'
-                    ])
-                }
             }
         }
 
@@ -96,15 +84,27 @@ pipeline {
                 sh '''
                     mkdir -p artifacts/ 
                     cp -r dist/ artifacts/ 2>/dev/null
-                    cp -r test-reports/ artifacts/ 2>/dev/null
+                    cp -r allure-results/ artifacts/ 2>/dev/null
                     find artifacts/ -type f
                 '''
             }
             post {
                 always {
-                     archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                    archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                 }
             }
         }
-    }   
+    }
+
+    post {
+        always {
+            allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'allure-results']]
+            ])
+        }
+    }
 }
