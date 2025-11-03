@@ -19,13 +19,11 @@ pipeline {
 
         stage('Check Environment') {
             steps {
-                echo "check Python and Poetry is install"
-
+                echo "Checking Python and Poetry installation"
                 sh '''
                     python3 --version
                     poetry --version
                 '''
-
             }
         }
 
@@ -33,56 +31,47 @@ pipeline {
             steps {
                 echo "Installing dependencies"
                 sh '''
-                poetry install --no-interaction --no-root
+                    poetry install --no-interaction --no-root
                 '''
             }
             post {
-                success{
-                    echo "dependencies passed"
+                success {
+                    echo "Dependencies installed successfully"
                 }
-                failure{
-                    echo "dependencies failed"
-                    sh 'tail -n 10 install_log.txt'
+                failure {
+                    echo "Dependency installation failed"
+                    sh 'tail -n 10 install_log.txt || true'
                 }
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo "Running tests"
+                echo "Running tests and generating HTML report"
                 sh '''
-                export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
-                poetry run pytest 
+                    mkdir -p reports
+                    poetry run pytest --maxfail=1 --disable-warnings \
+                        --html=reports/test_report.html --self-contained-html
                 '''
-            }
-            post {
-                success {
-                    echo "Tests passed"
-                }
-                failure {
-                    echo "Tests failed."
-                    sh 'tail -n 10 test_log.txt'
-                }
             }
         }
 
-        stage('Build') {
+        stage('Build Project') {
             steps {
-                echo "Building project"
+                echo "Building project with Poetry"
                 sh '''
-                poetry build
+                    mkdir -p build_output
+                    poetry build -f wheel -f sdist
+                    cp dist/* build_output/
                 '''
             }
-            post {
-                success {
-                    echo "Build completed"
-                }
-                failure{
-                    echo "Build not completed"
-
-                    sh 'tail -n 10 build_log.txt'
-                }
-            }
         }
-    }   
+    }
+
+    post {
+        always {
+            echo "Archiving artifacts..."
+            archiveArtifacts artifacts: 'build_output/*, reports/test_report.html', fingerprint: true
+        }
+    }
 }
