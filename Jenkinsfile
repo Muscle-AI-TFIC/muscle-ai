@@ -97,8 +97,13 @@ pipeline {
                     mkdir -p artifacts/ 
                     cp -r dist/ artifacts/ 2>/dev/null
                     cp -r test-reports/ artifacts/ 2>/dev/null
-                    find artifacts/ -type f 2>/dev/null
+                    find artifacts/ -type f
                 '''
+            }
+            post {
+                always {
+                     archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                }
             }
         }
     }   
