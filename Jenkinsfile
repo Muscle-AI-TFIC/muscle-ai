@@ -7,7 +7,6 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-
     options {
         timeout(time: 1, unit: 'HOURS')
         retry(1)
