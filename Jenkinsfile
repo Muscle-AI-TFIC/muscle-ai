@@ -4,7 +4,9 @@ pipeline {
             label 'Muscle-Agent'
         }
     }
-
+    triggers {
+        pollSCM('* * * * *')
+    }
     options {
         timeout(time: 1, unit: 'HOURS')
         retry(1)
@@ -51,17 +53,10 @@ pipeline {
             steps {
                 echo "Running tests"
                 sh '''
-                poetry run pytest 
+                export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
+                mkdir -p allure-results
+                poetry run pytest --alluredir=allure-results -v
                 '''
-            }
-            post {
-                success {
-                    echo "Tests passed"
-                }
-                failure {
-                    echo "Tests failed."
-                    sh 'tail -n 10 test_log.txt'
-                }
             }
         }
 
@@ -83,5 +78,35 @@ pipeline {
                 }
             }
         }
-    }   
+
+        stage('artefacts') {
+            steps {
+                echo 'Generating artefacts'
+
+                sh '''
+                    mkdir -p artifacts/ 
+                    cp -r dist/ artifacts/ 2>/dev/null
+                    cp -r allure-results/ artifacts/ 2>/dev/null
+                    find artifacts/ -type f
+                '''
+            }
+            post {  
+                always {
+                    archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'allure-results']]
+            ])
+        }
+    }
 }
