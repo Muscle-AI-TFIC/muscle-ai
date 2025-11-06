@@ -26,8 +26,5 @@ def main():
     process_training_plans(user_data, output_fileTraningAi)
     sending_information(output_fileTraningAi)
 
-            
-
-
 if __name__ == "__main__":
     main()

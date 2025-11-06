@@ -25,7 +25,7 @@ def generate_training_plan(traning_data: dict):
         f"Respond ONLY in JSON format with this structure:\n"
         f"{{\n"
         f"  \"data\": {{\n"
-        f"    \"Monday\": [\n"
+        f"    \"{current_day}\": [\n"
         f"      {{\"exercise_id\": 1, \"position\": 1, \"sets\": 3, \"reps\": 12}},\n"
         f"      {{\"exercise_id\": 2, \"position\": 2, \"sets\": 3, \"reps\": 10}},\n"
         f"      {{\"exercise_id\": 3, \"position\": 3, \"sets\": 3, \"reps\": 60}}\n"
@@ -33,6 +33,7 @@ def generate_training_plan(traning_data: dict):
         f"  }}\n"
         f"}}\n"
         f"Important rules:\n"
+        f"- The day key MUST be {current_day}\n"
         f"- Use ONLY the exercise IDs from the list above (1-15)\n"
         f"- 'position' must be sequential starting from 1\n"
         f"- 'sets' should be between 2-5\n"
@@ -41,6 +42,8 @@ def generate_training_plan(traning_data: dict):
         f"- Generate 3-5 exercises for Monday\n"
         f"- Consider the user's fitness level when selecting exercises\n"
         f"- Make sure the plan aligns with the user's goal\n"
+        f"- Use ONLY exercise IDs from the list above.\n"
+        f"- Do NOT include any explanation outside JSON.\n"
     )
     return ask_gemini(prompt)
 
