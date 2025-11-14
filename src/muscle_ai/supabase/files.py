@@ -1,8 +1,7 @@
-from muscle_ai.get_user import initialize_supabase
 import json
 import os
 
-def sending_information(input_file: str):
+def sending_information(input_file: str, supabase):
 
     if not os.path.exists(input_file):
         print(f"Input file {input_file} does not exist.")
@@ -14,8 +13,6 @@ def sending_information(input_file: str):
     if not isinstance(training_data, list) or not training_data:
         print("No data found")
         return
-
-    supabase = initialize_supabase()
 
     for entry in training_data:
         user_id = entry.get("user_id")

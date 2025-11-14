@@ -1,7 +1,4 @@
-from muscle_ai.get_user import initialize_supabase
-
-def saving_history_workouts(workouts:list, exercises:list):
-    supabase = initialize_supabase()
+def saving_history_workouts(workouts:list, exercises:list, supabase):
     print("Saving history workout...")
 
     for workout in workouts:

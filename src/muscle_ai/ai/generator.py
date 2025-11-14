@@ -1,7 +1,4 @@
-import json
-from muscle_ai.ai_client import ask_gemini
-from muscle_ai.get_user import save_json
-import time
+from muscle_ai.ai.client import ask_gemini
 
 def generate_training_plan(traning_data: dict):
 
@@ -46,54 +43,3 @@ def generate_training_plan(traning_data: dict):
     f"- DO NOT include any explanation or commentary outside the JSON.\n"
 )
     return ask_gemini(prompt)
-
-
-def clean_ai_response(ai_response: str):
-
-    cleaned = ai_response.strip()
-
-    if "{" in cleaned and "}" in cleaned:
-        start = cleaned.find("{")
-        end = cleaned.rfind("}") + 1
-        cleaned = cleaned[start:end]
-
-    return cleaned
-
-
-def process_training_plans(training_file: list, output_file_path: str):
-
-    print("Generating training plans using AI...")
-    results = []
-        
-    for user in training_file:
-        user_id = user.get('id')
-
-        print(f"Processing training plan for user ID: {user_id}")
-
-        ai_response = generate_training_plan(user)
-
-        if not ai_response:
-            print(f"Skipping user {user_id}: AI failed to generate a response.")
-            continue
-        try:
-            ai_response_clean = clean_ai_response(ai_response)
-
-            plan_data = json.loads(ai_response_clean)
-
-            training_plan = plan_data.get("data", {})
-
-            results.append({
-                "user_id": user_id,
-                "training_plan": training_plan
-            })
-        except Exception as e:
-            print(f"Skipping user {user_id}: Invalid JSON returned. Error: {e}")
-            continue
-
-        time.sleep(30)
-    
-
-    save_json(results, output_file_path)
-
-    return results
-    
