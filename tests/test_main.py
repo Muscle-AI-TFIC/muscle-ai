@@ -1,36 +1,29 @@
-import pytest
-from unittest.mock import patch, Mock
-import muscle_ai.main as main
+import os
+from unittest.mock import patch
+from muscle_ai.main import main  
 
+@patch("muscle_ai.main.sending_information")
+@patch("muscle_ai.main.process_training_plans")
+@patch("muscle_ai.main.saving_history_workouts")
+@patch("muscle_ai.main.save_json")
+@patch("muscle_ai.main.get_daily_workout_exercises", return_value=[{"ex": "ok"}])
+@patch("muscle_ai.main.get_daily_workout", return_value=[{"dw": "ok"}])
+@patch("muscle_ai.main.get_user", return_value=[{"id": "user123"}])
+@patch("muscle_ai.main.os.path.dirname", side_effect=lambda path=None: "/fakepath")
+@patch("muscle_ai.main.os.path.abspath", return_value="/fakepath/main.py")
 
-def test_save_training_plan():
-    user_data = {"name": "Alice"}
-    training_plan = "Plan A"
-    expected_filename = "alice_training_plan.json"
+def test_main_function(
+    mock_abspath,
+    mock_dirname,
+    mock_get_user,
+    mock_get_daily_workout,
+    mock_get_daily_exercises,
+    mock_save_json,
+    mock_save_history,
+    mock_process_plans,
+    mock_send_info
+):
 
-    mock_file = Mock()
-    mock_file.__enter__ = Mock(return_value=mock_file)
-    mock_file.__exit__ = Mock(return_value=None)
+    main()
 
-    with patch("builtins.open", return_value=mock_file):     
-        filename = main.save_training_plan(training_plan, user_data)
-
-    #Verifying that the file has the expected name
-    assert filename == expected_filename
-
-def test_main(capsys):
-    #Mocking the functions called within main()
-    with patch("muscle_ai.main.load_user_data") as mock_load, \
-         patch("muscle_ai.main.generate_training_plan") as mock_generate, \
-         patch("muscle_ai.main.save_training_plan") as mock_save:
-
-        mock_load.return_value = {"name": "TestUser"}
-        mock_generate.return_value = "Fake Training Plan"
-        mock_save.return_value = "testuser_training_plan.json"
-
-        main.main()
-
-        #Capturing printed output
-        captured = capsys.readouterr()
-        assert "Muscle AI: Thinking about the best type of traning just for you!" in captured.out
-        assert "Training plan generated and saved to testuser_training_plan.json." in captured.out
+    assert mock_save_json.call_count == 3 

@@ -1,29 +1,36 @@
-from muscle_ai.trainer import load_user_data, generate_training_plan
-import json
+from muscle_ai.core.config import config
+from muscle_ai.core.utils import save_json
+from muscle_ai.supabase.client import get_supabase
+from muscle_ai.supabase.profiles import get_user
+from muscle_ai.supabase.workouts import get_daily_workout
+from muscle_ai.supabase.workout_exercise import get_daily_workout_exercises
+from muscle_ai.ai.processing import process_training_plans
 
-def save_training_plan(training_plan: str, user_data: dict) -> str:
-    
-    filename = f"{user_data.get('name', 'user').lower()}_training_plan.json"
-    plan_data = {
-        "user_name": user_data.get('name', 'User'),
-        "training_plan": training_plan
-    }
-    
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(plan_data, f, indent=2, ensure_ascii=False)
-    
-    return filename
 
+import os
 
 def main():
-    print("Muscle AI: Thinking about the best type of traning just for you!\n")
-    
-    user_data = load_user_data("user_data.json")
-    training_plan = generate_training_plan(user_data)
-    saved_file = save_training_plan(training_plan, user_data)
 
-    print(f"Training plan generated and saved to {saved_file}.")
+    config()
 
+    supabase = get_supabase()
+
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    output_fileUser = os.path.join(project_root, "user.json")
+    output_fileTraningAi = os.path.join(project_root, "traningAi.json")
+    output_filedaily_workout = os.path.join(project_root, "daily_workout.json")
+    output_filedaily_workout_exercises = os.path.join(project_root, "daily_workout_exercises.json")
+
+
+    user_data = get_user(supabase)
+    daily_workout_data = get_daily_workout(supabase)
+    daily_workout_exercises_data = get_daily_workout_exercises(supabase)
+    save_json(daily_workout_data, output_filedaily_workout)
+    save_json(daily_workout_exercises_data, output_filedaily_workout_exercises)
+    save_json(user_data, output_fileUser)
+    process_training_plans(user_data, output_fileTraningAi)
 
 if __name__ == "__main__":
     main()

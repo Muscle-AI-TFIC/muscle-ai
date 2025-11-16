@@ -2,7 +2,14 @@
 key.json
 user.json
 test.json
+training.json
+traningAi.json
+src/muscle_ai/__pycache__
 .vscode
 .pytest_cache
 __pycache__
 report.html
+test.txt
+daily_workout.json
+daily_workout_exercises.json
+src/muscle_ai/IgnoreThis

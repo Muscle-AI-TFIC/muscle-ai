@@ -14,7 +14,8 @@ dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "firebase-admin (>=7.1.0,<8.0.0)",
     "requests (>=2.32.5,<3.0.0)",
-    "pytest (>=8.4.2,<9.0.0)"
+    "pytest (>=8.4.2,<9.0.0)",
+    "supabase (>=2.22.2,<3.0.0)"
 ]
 
 [tool.poetry]
@@ -27,6 +28,13 @@ mockito = "^1.5.4"
 pytest-mock = "^3.14.1"
 pytest-html = "^4.1.1"
 pytest-cov = "^7.0.0"
+pytest-sugar = "^1.1.1"
+
+
+[tool.poetry.group.test.dependencies]
+allure-pytest = "^2.15.0"
+pytest-html = "^4.1.1"
+pytest-metadata = "^3.1.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
