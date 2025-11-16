@@ -55,7 +55,7 @@ pipeline {
                 sh '''
                 export PYTHONPATH="${WORKSPACE}/src:$PYTHONPATH"
                 mkdir -p allure-results
-                poetry run pytest --alluredir=allure-results -v
+                poetry run pytest tests/tests_ai tests/tests_core tests/tests_supabase --alluredir=allure-results -v
                 '''
             }
         }
