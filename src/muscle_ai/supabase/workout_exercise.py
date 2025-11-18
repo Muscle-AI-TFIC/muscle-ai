@@ -1,6 +1,6 @@
-def get_daily_workout_exercises(supabase):
+def get_daily_workout_exercises(supabase, daily_workout_ids):
 
-    response = supabase.table("daily_workout_exercises").select("*").execute()
+    response = supabase.table("daily_workout_exercises").select("*").in_("daily_workout_id",daily_workout_ids).execute()
     profiles = response.data if hasattr(response, "data") else response
  
     workout_data_exercise = []
