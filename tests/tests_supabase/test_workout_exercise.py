@@ -16,8 +16,8 @@ def test_get_daily_workout_exercises():
     ]
 
     mock_response.data = mock_data
-    mock_supabase.table.return_value.select.return_value.execute.return_value = mock_response
+    mock_supabase.table.return_value.select.return_value.in_.return_value.execute.return_value = mock_response
 
-    result = get_daily_workout_exercises(mock_supabase)
+    result = get_daily_workout_exercises(mock_supabase, ["19"])
 
     assert result == mock_data
