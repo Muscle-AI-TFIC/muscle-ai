@@ -1,0 +1,48 @@
+name: Run Training Worker
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: training-worker-group
+  cancel-in-progress: false
+
+jobs:
+  run-training:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env at project root
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Create key.json at project root
+        run: |
+          echo '${{ secrets.KEY_FILE }}' > key.json
+
+      
+      - name: List root folder
+        run: ls -al .
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Run Training
+        run: |
+          poetry run python src/muscle_ai/main.py
